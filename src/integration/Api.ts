@@ -34,66 +34,32 @@ export const fetchAccountEntries = async (args: {
   .then(handleResponse<Pageable<AccountEntry>>)
 }
 
-export const deleteAccountEntry = async (accountEntryId: number): Promise<void> => {
-  await fetch(`/api/account-entries/${accountEntryId}`, {
-    method: "DELETE",
-  });
-  return
-}
+export const deleteAccountEntry = async (accountEntryId: number) => api.deleteAccountEntry(accountEntryId)
 
-export const deleteAccount = async (id: number): Promise<void> => {
-  await fetch(`/api/accounts/${id}`, {
-    method: "DELETE",
-  }).then(handleResponse);
-  return
-}
+export const deleteAccount = async (id: number) => api.deleteAccount(id).then(handleResponse);
 
-export const createAccountEntry = async (accountEntry: AccountEntry): Promise<AccountEntry> => {
-  return await fetch(`/api/accounts/${accountEntry.accountId}/account-entries`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+export const createAccountEntry = async (accountEntry: AccountEntry) => api.createAccountEntry(accountEntry.accountId as number, {
       value: accountEntry.value,
       name: accountEntry.name,
-      entryDate: accountEntry.entryDate
-    }),
-  })
+      entryDate: accountEntry.entryDate!!
+    })
   .then(handleResponse<AccountEntry>)
-}
 
-export const createAccount = async (account: Account): Promise<Account> => {
-  return await fetch(`/api/accounts`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
+export const createAccount = async (account: Account) => api.createAccount({
       accountId: account.accountId,
       accountName: account.accountName,
       accountType: account.accountType
-    }),
   })
   .then(handleResponse<Account>)
-}
 
-export const updateAccountEntry = async (accountEntry: AccountEntry): Promise<AccountEntry> => {
-  return await fetch(`/api/accounts/${accountEntry.accountId}/account-entries/${accountEntry.id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      value: accountEntry.value,
-      name: accountEntry.name,
-      entryDate: accountEntry.entryDate
-    }),
+export const updateAccountEntry = async (accountEntry: AccountEntry) => api.updateAccountEntry(accountEntry.accountId as number, accountEntry.id as number, {
+    value: accountEntry.value,
+    name: accountEntry.name,
+    entryDate: accountEntry.entryDate!
   })
   .then(handleResponse<AccountEntry>)
-}
 
-export const updateAccount = async (account: Account): Promise<Account> => api.updateAccount(account.id as number, {
+export const updateAccount = async (account: Account) => api.updateAccount(account.id as number, {
     accountId: account.accountId,
     accountName:  account.accountName,
     accountType: account.accountType
