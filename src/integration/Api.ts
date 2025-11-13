@@ -1,6 +1,9 @@
 import {Dispatch, SetStateAction} from "react";
 import {Account, AccountEntry, Pageable} from "../types";
 import {handleResponse} from "./utilities.ts";
+import {Api} from "../generated/Api.ts"
+
+const api = new Api({baseUrl: window.location.origin})
 
 export const fetchAccountEntries = async (args: {
   page: number | undefined | null,
@@ -90,31 +93,19 @@ export const updateAccountEntry = async (accountEntry: AccountEntry): Promise<Ac
   .then(handleResponse<AccountEntry>)
 }
 
-export const updateAccount = async (account: Account): Promise<Account> => {
-  return await fetch(`/api/accounts/${account.id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      accountId: account.accountId,
-      accountName: account.accountName,
-      accountType: account.accountType
-    }),
+export const updateAccount = async (account: Account): Promise<Account> => api.updateAccount(account.id as number, {
+    accountId: account.accountId,
+    accountName:  account.accountName,
+    accountType: account.accountType
   })
   .then(handleResponse<Account>)
-}
 
-export const fetchAccounts = async (): Promise<Pageable<Account>> => {
-  const url = new URL("/api/accounts", window.location.origin);
-
-  url.searchParams.set("size", Number.MAX_SAFE_INTEGER.toString());
-
-  return await fetch(url, {
-    method: "GET",
-  })
+export const fetchAccounts = async () => api.getAccounts({
+        pageable: {
+          size: Number.MAX_SAFE_INTEGER
+        }
+      })
   .then(handleResponse<Pageable<Account>>)
-}
 
 export const withLoading = <T, A>({setIsFetching, fn}: {
   setIsFetching: Dispatch<SetStateAction<boolean>>;

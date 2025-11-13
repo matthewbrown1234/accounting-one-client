@@ -30,6 +30,7 @@ export default function Accounts() {
   const [pageableAccounts, setPageableAccounts] = useState<Pageable<Account> | undefined>(undefined);
   const accounts = pageableAccounts?.content ?? [];
   const newRowExists = accounts.some((account) => account.id === "NEW");
+
   const onLoad = async () => {
     const pageableAccount = await withLoading({
       setIsFetching,
